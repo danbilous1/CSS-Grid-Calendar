@@ -30,16 +30,20 @@ let events = [
 const fromInput = document.querySelector('.from');
 const toInput = document.querySelector('.to');
 const taskInput = document.querySelector('.task');
-const newBtn = document.querySelector('.new-event'
-);
-let newContainer = document.createElement('div')
+const dateInput = document.querySelector('.date');
+
+const dateText = document.querySelector('.date-title');
+
+const newBtn = document.querySelector('.new-event');
+let newContainer = document.createElement('div');
 
 class Event {
-	constructor(from, to, color, task = '') {
+	constructor(from, to, color, task = '', day) {
 		this.from = from;
 		this.to = to;
 		this.color = color;
-		this.task = task
+		this.task = task;
+		this.day = day;
 	}
 	setHours(from=this.from,to=this.to) {
 		if ((to - 1) <= 24) {
@@ -64,6 +68,7 @@ class Event {
 
 		this.setHours(from,to);
 		this.eventDiv.style.gridRow = this.from + '/' + this.to;
+		console.log(this.to, this.from)
 	}
 	
 	createDomElement() {
@@ -80,7 +85,7 @@ class Event {
 		this.eventDiv.append(this.taskHours, this.taskDiv);
 		this.taskDiv.innerText = this.task;
 		this.eventDiv.classList.add(this.color);
-		this.eventDiv.style.gridRow = Number(this.from+1) + '/' + Number(this.to+1);
+		this.eventDiv.style.gridRow = Number(this.from) + '/' + Number(this.to);
 
 
 		this.eventDiv.addEventListener('dragover', (event) =>{
@@ -122,22 +127,21 @@ class Event {
 	
 	
 }
-
+let startDay = new Date()
 newBtn.addEventListener('click', function() {
 	let from = fromInput.value;
 	let to = toInput.value;
 	let task = taskInput.value;
+	let day = dateInput.value;
 
-	let newEvent = new Event(from, to, 'new', task)
+	let newEvent = new Event(from, to, 'new', task, day);
 	events.push(newEvent);
+	console.log(events);
 
-
-
-	container.append(newEvent.createDomElement());
 	// setInterval(()=>{
 	// 	newEvent.reschedule(Math.round(Math.random()*12), Math.round(Math.random()*12) + 12)
 	// },1000)
-
+	generateWeek(startDay)
 	fromInput.value = '';
 	toInput.value = '';
 })
@@ -151,10 +155,23 @@ function generateWeek(day) {
 		day: '2-digit',
 	};
 
-	let todayDate = today.toLocaleDateString('de-DE', options)
+	const textOptions = {
+			weekday: 'long',
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric',
+		};
+	let todayDate = today.toLocaleDateString('de-DE', options);
+	let todayText = today.toLocaleDateString('en-EN', textOptions);
+
+	dateText.innerText = `${todayText}`
+	
 	for (let i = 0; i < events.length; i++) {
-		 if (events[i].day == todayDate) {
+		let date = new Date(events[i].day)
+		let formatted = date.toLocaleDateString('de-DE', options);
+		 if (formatted == todayDate) {
 			 todayEvents.push(events[i]);
+			 // console.log(todayEvents)
 		 }
 	}
 	if(generateWeek.events){
@@ -165,7 +182,7 @@ function generateWeek(day) {
 	
 	for (let i = 0; i < todayEvents.length; i++) {
 		let event = todayEvents[i];
-		let eventClass = new Event(event.from, event.to, event.color, event.task)
+		let eventClass = new Event(event.from, event.to, event.color, event.task, event.day)
 
 		const eventDiv = eventClass.createDomElement()
 		generateWeek.events.push(eventDiv)
@@ -173,7 +190,7 @@ function generateWeek(day) {
 		// eventDiv.classList.add()
 	}
 }
-let startDay = new Date()
+
 generateWeek(startDay)
 
 
@@ -189,10 +206,5 @@ next.addEventListener('click', function() {
 	startDay.setDate(startDay.getDate() + 1);
 	generateWeek(startDay)
 })
-//add left right btns
-//when click left btn we generate week with one day before data
-// when right day after
 
 Event.generateHours()
-// add new input, when creating new event, where user can enter day 
-//add title with current preview day
