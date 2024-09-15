@@ -1,7 +1,8 @@
 # CSS Grid Calendar
 
-Calender was made with CSS Grid.
+### Features:
+- Creating Event with Task with date(Day, Month, Year).
+- Dragging your Event.
 
-### Options:
-- Creating Event with Task. Set it hours(From, To).
-- Dragging your Event
+### Test it out:
+[Click Me](https://danbilous1.github.io/Weather-Forecast/)
